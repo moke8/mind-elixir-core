@@ -1,6 +1,6 @@
 {
-  "name": "mind-elixir",
-  "version": "1.2.0",
+  "name": "zb-mind-elixir",
+  "version": "1.0.0",
   "description": "Mind elixir is a free open source mind map core.",
   "main": "dist/MindElixir.js",
   "scripts": {
@@ -29,9 +29,9 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ssshooter/mind-elixir-core"
+    "url": "https://github.com/moke8/mind-elixir-core"
   },
-  "homepage": "https://mind-elixir.com/",
+  "homepage": "https://github.com/moke8/mind-elixir-core",
   "author": "ssshooter",
   "license": "MIT",
   "devDependencies": {

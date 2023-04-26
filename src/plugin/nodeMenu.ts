@@ -1,5 +1,5 @@
-import './nodeMenu.less'
 import i18n from '../i18n'
+import './nodeMenu.less'
 
 const createDiv = (id, innerHTML) => {
   const div = document.createElement('div')
@@ -69,7 +69,7 @@ export default function (mind) {
   const tagDiv = createDiv('nm-tag', `${i18n[locale].tag}<input class="nm-tag" tabindex="-1" placeholder="${i18n[locale].tagsSeparate}" />`)
   const iconDiv = createDiv('nm-icon', `${i18n[locale].icon}<input class="nm-icon" tabindex="-1" placeholder="${i18n[locale].iconsSeparate}" />`)
   const urlDiv = createDiv('nm-url', `${i18n[locale].url}<input class="nm-url" tabindex="-1" />`)
-  const memoDiv = createDiv('nm-memo', `${i18n[locale].memo || 'Memo'}<textarea class="nm-memo" rows="5" tabindex="-1" />`)
+  const memoDiv = createDiv('nm-memo', `${mind.memoName || i18n[locale].memo || 'Memo'}<textarea class="nm-memo" rows="5" tabindex="-1" />`)
 
   // create container
   const menuContainer = document.createElement('div')
@@ -79,12 +79,15 @@ export default function (mind) {
   <use xlink:href="#icon-close"></use>
   </svg></div>
   `
-  menuContainer.appendChild(styleDiv)
-  menuContainer.appendChild(tagDiv)
-  menuContainer.appendChild(iconDiv)
-  menuContainer.appendChild(urlDiv)
+  if (mind.customStyle) {
+    menuContainer.appendChild(styleDiv)
+    menuContainer.appendChild(tagDiv)
+    menuContainer.appendChild(iconDiv)
+    menuContainer.appendChild(urlDiv)
+  }
   menuContainer.appendChild(memoDiv)
   menuContainer.hidden = true
+
   mind.container.append(menuContainer)
 
   // query input element
@@ -99,99 +102,102 @@ export default function (mind) {
 
   // handle input and button click
   let bgOrFont
-  menuContainer.onclick = e => {
-    if (!mind.currentNode) return
-    const nodeObj = mind.currentNode.nodeObj
-    const target = e.target as HTMLElement
-    if (target.className === 'palette') {
-      if (!nodeObj.style) nodeObj.style = {}
-      clearSelect('.palette', 'nmenu-selected')
-      target.className = 'palette nmenu-selected'
-      if (bgOrFont === 'font') {
-        nodeObj.style.color = target.dataset.color
-      } else if (bgOrFont === 'background') {
-        nodeObj.style.background = target.dataset.color
-      }
-      mind.updateNodeStyle(nodeObj)
-    } else if (target.className === 'background') {
-      clearSelect('.palette', 'nmenu-selected')
-      bgOrFont = 'background'
-      target.className = 'background selected'
-      target.previousElementSibling.className = 'font'
-      if (nodeObj.style && nodeObj.style.background) {
-        menuContainer.querySelector('.palette[data-color="' + nodeObj.style.background + '"]').className = 'palette nmenu-selected'
-      }
-    } else if (target.className === 'font') {
-      clearSelect('.palette', 'nmenu-selected')
-      bgOrFont = 'font'
-      target.className = 'font selected'
-      target.nextElementSibling.className = 'background'
-      if (nodeObj.style && nodeObj.style.color) {
-        menuContainer.querySelector('.palette[data-color="' + nodeObj.style.color + '"]').className = 'palette nmenu-selected'
+  if (mind.customStyle) {
+    menuContainer.onclick = e => {
+      if (!mind.currentNode) return
+      const nodeObj = mind.currentNode.nodeObj
+      const target = e.target as HTMLElement
+      if (target.className === 'palette') {
+        if (!nodeObj.style) nodeObj.style = {}
+        clearSelect('.palette', 'nmenu-selected')
+        target.className = 'palette nmenu-selected'
+        if (bgOrFont === 'font') {
+          nodeObj.style.color = target.dataset.color
+        } else if (bgOrFont === 'background') {
+          nodeObj.style.background = target.dataset.color
+        }
+        mind.updateNodeStyle(nodeObj)
+      } else if (target.className === 'background') {
+        clearSelect('.palette', 'nmenu-selected')
+        bgOrFont = 'background'
+        target.className = 'background selected'
+        target.previousElementSibling.className = 'font'
+        if (nodeObj.style && nodeObj.style.background) {
+          menuContainer.querySelector('.palette[data-color="' + nodeObj.style.background + '"]').className = 'palette nmenu-selected'
+        }
+      } else if (target.className === 'font') {
+        clearSelect('.palette', 'nmenu-selected')
+        bgOrFont = 'font'
+        target.className = 'font selected'
+        target.nextElementSibling.className = 'background'
+        if (nodeObj.style && nodeObj.style.color) {
+          menuContainer.querySelector('.palette[data-color="' + nodeObj.style.color + '"]').className = 'palette nmenu-selected'
+        }
       }
     }
-  }
-  Array.from(sizeSelector).map(dom => {
-    ;(dom as HTMLElement).onclick = e => {
+    Array.from(sizeSelector).map(dom => {
+      ;(dom as HTMLElement).onclick = e => {
+        if (!mind.currentNode.nodeObj.style) mind.currentNode.nodeObj.style = {}
+        clearSelect('.size', 'size-selected')
+        const size = e.currentTarget as HTMLElement
+        mind.currentNode.nodeObj.style.fontSize = size.dataset.size
+        size.className = 'size size-selected'
+        mind.updateNodeStyle(mind.currentNode.nodeObj)
+      }
+    })
+    bold.onclick = (e: MouseEvent & { currentTarget: Element }) => {
       if (!mind.currentNode.nodeObj.style) mind.currentNode.nodeObj.style = {}
-      clearSelect('.size', 'size-selected')
-      const size = e.currentTarget as HTMLElement
-      mind.currentNode.nodeObj.style.fontSize = size.dataset.size
-      size.className = 'size size-selected'
-      mind.updateNodeStyle(mind.currentNode.nodeObj)
+      if (mind.currentNode.nodeObj.style.fontWeight === 'bold') {
+        delete mind.currentNode.nodeObj.style.fontWeight
+        e.currentTarget.className = 'bold'
+        mind.updateNodeStyle(mind.currentNode.nodeObj)
+      } else {
+        mind.currentNode.nodeObj.style.fontWeight = 'bold'
+        e.currentTarget.className = 'bold size-selected'
+        mind.updateNodeStyle(mind.currentNode.nodeObj)
+      }
     }
-  })
-  bold.onclick = (e: MouseEvent & { currentTarget: Element }) => {
-    if (!mind.currentNode.nodeObj.style) mind.currentNode.nodeObj.style = {}
-    if (mind.currentNode.nodeObj.style.fontWeight === 'bold') {
-      delete mind.currentNode.nodeObj.style.fontWeight
-      e.currentTarget.className = 'bold'
-      mind.updateNodeStyle(mind.currentNode.nodeObj)
-    } else {
-      mind.currentNode.nodeObj.style.fontWeight = 'bold'
-      e.currentTarget.className = 'bold size-selected'
-      mind.updateNodeStyle(mind.currentNode.nodeObj)
+    tagInput.onchange = (e: InputEvent & { target: HTMLInputElement }) => {
+      if (!mind.currentNode) return
+      if (typeof e.target.value === 'string') {
+        const newTags = e.target.value.split(',')
+        mind.updateNodeTags(
+          mind.currentNode.nodeObj,
+          newTags.filter(tag => tag)
+        )
+      }
     }
-  }
-  tagInput.onchange = (e: InputEvent & { target: HTMLInputElement }) => {
-    if (!mind.currentNode) return
-    if (typeof e.target.value === 'string') {
-      const newTags = e.target.value.split(',')
-      mind.updateNodeTags(
-        mind.currentNode.nodeObj,
-        newTags.filter(tag => tag)
-      )
+    iconInput.onchange = (e: InputEvent & { target: HTMLInputElement }) => {
+      if (!mind.currentNode) return
+      if (typeof e.target.value === 'string') {
+        const newIcons = e.target.value.split(',')
+        mind.updateNodeIcons(
+          mind.currentNode.nodeObj,
+          newIcons.filter(icon => icon)
+        )
+      }
     }
-  }
-  iconInput.onchange = (e: InputEvent & { target: HTMLInputElement }) => {
-    if (!mind.currentNode) return
-    if (typeof e.target.value === 'string') {
-      const newIcons = e.target.value.split(',')
-      mind.updateNodeIcons(
-        mind.currentNode.nodeObj,
-        newIcons.filter(icon => icon)
-      )
+    urlInput.onchange = (e: InputEvent & { target: HTMLInputElement }) => {
+      if (!mind.currentNode) return
+      mind.updateNodeHyperLink(mind.currentNode.nodeObj, e.target.value)
     }
-  }
-  urlInput.onchange = (e: InputEvent & { target: HTMLInputElement }) => {
-    if (!mind.currentNode) return
-    mind.updateNodeHyperLink(mind.currentNode.nodeObj, e.target.value)
+
+    let state = 'open'
+    buttonContainer.onclick = e => {
+      if (state === 'open') {
+        state = 'close'
+        menuContainer.className = 'close'
+        buttonContainer.innerHTML = `<svg class="icon" aria-hidden="true"><use xlink:href="#icon-menu"></use></svg>`
+      } else {
+        state = 'open'
+        menuContainer.className = ''
+        buttonContainer.innerHTML = `<svg class="icon" aria-hidden="true"><use xlink:href="#icon-close"></use></svg>`
+      }
+    }
   }
   memoInput.onchange = (e: InputEvent & { target: HTMLInputElement }) => {
     if (!mind.currentNode) return
     mind.currentNode.nodeObj.memo = e.target.value
-  }
-  let state = 'open'
-  buttonContainer.onclick = e => {
-    if (state === 'open') {
-      state = 'close'
-      menuContainer.className = 'close'
-      buttonContainer.innerHTML = `<svg class="icon" aria-hidden="true"><use xlink:href="#icon-menu"></use></svg>`
-    } else {
-      state = 'open'
-      menuContainer.className = ''
-      buttonContainer.innerHTML = `<svg class="icon" aria-hidden="true"><use xlink:href="#icon-close"></use></svg>`
-    }
   }
 
   // handle node selection
@@ -200,35 +206,48 @@ export default function (mind) {
   })
   mind.bus.addListener('selectNode', function (nodeObj, clickEvent) {
     if (!clickEvent) return
+    if (mind.lastEdit) {
+      if (nodeObj.children && !mind.customStyle) {
+        menuContainer.hidden = true
+        return
+      }
+      if (nodeObj.children) {
+        document.querySelector('#nm-memo').setAttribute('style', 'display: none')
+      } else {
+        document.querySelector('#nm-memo').setAttribute('style', 'display: block')
+      }
+    }
     menuContainer.hidden = false
     clearSelect('.palette', 'nmenu-selected')
     clearSelect('.size', 'size-selected')
     clearSelect('.bold', 'size-selected')
-    bgOrFont = 'font'
-    fontBtn.className = 'font selected'
-    fontBtn.nextElementSibling.className = 'background'
-    if (nodeObj.style) {
-      if (nodeObj.style.fontSize) {
-        menuContainer.querySelector('.size[data-size="' + nodeObj.style.fontSize + '"]').className = 'size size-selected'
+    if (mind.customStyle) {
+      bgOrFont = 'font'
+      fontBtn.className = 'font selected'
+      fontBtn.nextElementSibling.className = 'background'
+      if (nodeObj.style) {
+        if (nodeObj.style.fontSize) {
+          menuContainer.querySelector('.size[data-size="' + nodeObj.style.fontSize + '"]').className = 'size size-selected'
+        }
+        if (nodeObj.style.fontWeight) {
+          menuContainer.querySelector('.bold').className = 'bold size-selected'
+        }
+        if (nodeObj.style.color) {
+          menuContainer.querySelector('.palette[data-color="' + nodeObj.style.color + '"]').className = 'palette nmenu-selected'
+        }
       }
-      if (nodeObj.style.fontWeight) {
-        menuContainer.querySelector('.bold').className = 'bold size-selected'
+      if (nodeObj.tags) {
+        tagInput.value = nodeObj.tags.join(',')
+      } else {
+        tagInput.value = ''
       }
-      if (nodeObj.style.color) {
-        menuContainer.querySelector('.palette[data-color="' + nodeObj.style.color + '"]').className = 'palette nmenu-selected'
+      if (nodeObj.icons) {
+        iconInput.value = nodeObj.icons.join(',')
+      } else {
+        iconInput.value = ''
       }
+      urlInput.value = nodeObj.hyperLink || ''
     }
-    if (nodeObj.tags) {
-      tagInput.value = nodeObj.tags.join(',')
-    } else {
-      tagInput.value = ''
-    }
-    if (nodeObj.icons) {
-      iconInput.value = nodeObj.icons.join(',')
-    } else {
-      iconInput.value = ''
-    }
-    urlInput.value = nodeObj.hyperLink || ''
     memoInput.value = nodeObj.memo || ''
   })
 }

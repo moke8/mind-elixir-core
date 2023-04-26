@@ -1,65 +1,65 @@
-import { LEFT, RIGHT, SIDE, GAP } from './const'
-import { isMobile, addParentLink, getObjById, generateUUID, generateNewObj } from './utils/index'
-import { findEle, createInputDiv, Topic, createGroup, createTop, createTopic } from './utils/dom'
-import { layout, createChildren, judgeDirection } from './utils/layout'
-import { createLinkSvg, createLine } from './utils/svg'
+import { GAP, LEFT, RIGHT, SIDE } from './const'
+import { createLink, hideLinkController, removeLink, selectLink, showLinkController } from './customLink'
 import {
-  selectNode,
-  unselectNode,
-  selectNextSibling,
-  selectPrevSibling,
-  selectFirstChild,
-  selectParent,
-  getAllDataString,
+  cancelFocus,
+  disableEdit,
+  enableEdit,
+  expandNode,
+  focusNode,
   getAllData,
   getAllDataMd,
-  scale,
-  toCenter,
-  focusNode,
-  cancelFocus,
+  getAllDataString,
   initLeft,
   initRight,
   initSide,
-  setLocale,
-  enableEdit,
-  disableEdit,
-  expandNode,
   refresh,
+  scale,
+  selectFirstChild,
+  selectNextSibling,
+  selectNode,
+  selectParent,
+  selectPrevSibling,
+  setLocale,
+  toCenter,
+  unselectNode,
 } from './interact'
-import {
-  insertSibling,
-  insertBefore,
-  insertParent,
-  addChild,
-  copyNode,
-  moveNode,
-  removeNode,
-  moveUpNode,
-  moveDownNode,
-  beginEdit,
-  updateNodeStyle,
-  updateNodeTags,
-  updateNodeIcons,
-  updateNodeHyperLink,
-  setNodeTopic,
-  moveNodeBefore,
-  moveNodeAfter,
-} from './nodeOperation'
-import { createLink, removeLink, selectLink, hideLinkController, showLinkController } from './customLink'
 import linkDiv from './linkDiv'
 import initMouseEvent from './mouse'
+import {
+  addChild,
+  beginEdit,
+  copyNode,
+  insertBefore,
+  insertParent,
+  insertSibling,
+  moveDownNode,
+  moveNode,
+  moveNodeAfter,
+  moveNodeBefore,
+  moveUpNode,
+  removeNode,
+  setNodeTopic,
+  updateNodeHyperLink,
+  updateNodeIcons,
+  updateNodeStyle,
+  updateNodeTags,
+} from './nodeOperation'
+import { Topic, createGroup, createInputDiv, createTop, createTopic, findEle } from './utils/dom'
+import { addParentLink, generateNewObj, generateUUID, getObjById, isMobile } from './utils/index'
+import { createChildren, judgeDirection, layout } from './utils/layout'
+import { createLine, createLinkSvg } from './utils/svg'
 
 import contextMenu from './plugin/contextMenu'
-import toolBar from './plugin/toolBar'
-import nodeMenu from './plugin/nodeMenu'
-import nodeDraggable from './plugin/nodeDraggable'
 import keypress from './plugin/keypress'
 import mobileMenu from './plugin/mobileMenu'
+import nodeDraggable from './plugin/nodeDraggable'
+import nodeMenu from './plugin/nodeMenu'
+import toolBar from './plugin/toolBar'
 
 import Bus from './utils/pubsub'
 
-import './index.less'
 import './iconfont/iconfont.js'
+import './index.less'
 
 // TODO show up animation
 
@@ -135,6 +135,10 @@ export interface MindElixirInstance {
   editable: boolean
   contextMenu: boolean
   contextMenuOption: object
+  customStyle: boolean
+  maxDepth: number
+  lastEdit: boolean
+  memoName: string
   toolBar: boolean
   nodeMenu: boolean
   keypress: boolean
@@ -164,6 +168,10 @@ export interface Options {
   data: MindElixirData
   direction?: number
   locale?: string
+  customStyle?: boolean
+  maxDepth?: number
+  lastEdit?: boolean
+  memoName?: string
   draggable?: boolean
   editable?: boolean
   contextMenu?: boolean
@@ -207,6 +215,10 @@ function MindElixir(
     draggable,
     editable,
     contextMenu,
+    customStyle,
+    maxDepth,
+    lastEdit,
+    memoName,
     contextMenuOption,
     toolBar,
     nodeMenu,
@@ -242,6 +254,10 @@ function MindElixir(
   this.toolBar = toolBar === undefined ? true : toolBar
   this.nodeMenu = nodeMenu === undefined ? true : nodeMenu
   this.keypress = keypress === undefined ? true : keypress
+  this.customStyle = customStyle === undefined ? true : customStyle
+  this.lastEdit = lastEdit === undefined ? true : lastEdit
+  this.maxDepth = maxDepth
+  this.memoName = memoName
   this.mobileMenu = mobileMenu
   // record the direction before enter focus mode, must true in focus mode, reset to null after exit focus
   this.direction = typeof direction === 'number' ? direction : 1

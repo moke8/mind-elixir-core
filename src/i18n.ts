@@ -9,7 +9,7 @@ const cn = {
   moveDown: '下移',
   link: '连接',
   clickTips: '请点击目标节点',
-
+  desc: '功能描述',
   font: '文字',
   background: '背景',
   tag: '标签',

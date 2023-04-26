@@ -1,3 +1,18 @@
+## illustrate
+
+The content is based on the original author and the following configuration items have been added:
+
+```json
+{
+  "lastEdit": true, // Can only the last level node change the description
+  "customStyle": true, // Do need to change the style, label, and URL functions
+  "maxDepth": 5, // Maximum depth of child nodes created
+  "memoName": "功能描述" // Describe the name of the field, only change the display, and the returned data is still memo
+}
+```
+
+---
+
 ![mindelixir logo](https://raw.githubusercontent.com/ssshooter/mind-elixir-core/master/images/logo.png)
 
 <p>
@@ -66,11 +81,11 @@ https://mind-elixir.com/
 
 https://codepen.io/ssshooter/pen/GVQRYK
 
-#### Use with React 
+#### Use with React
 
 https://codesandbox.io/s/mind-elixir-react-9sisb
 
-#### Use with Vue 
+#### Use with Vue
 
 https://codesandbox.io/s/mind-elixir-vue-nqjjl
 
@@ -127,6 +142,10 @@ let options = {
   nodeMenu: true, // default true
   keypress: true, // default true
   locale: 'en', // [zh_CN,zh_TW,en,ja,pt,ru] waiting for PRs
+  lastEdit: true, // Can only the last level node change the description
+  customStyle: true, // Do need to change the style, label, and URL functions
+  maxDepth: 5, // Maximum depth of child nodes created
+  memoName: '功能描述', // Describe the name of the field, only change the display, and the returned data is still memo
   overflowHidden: false, // default false
   primaryLinkStyle: 2, // [1,2] default 1
   primaryNodeVerticalGap: 15, // default 25

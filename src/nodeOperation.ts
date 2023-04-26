@@ -1,22 +1,34 @@
 import type { NodeElement, NodeObj } from './index'
 
+import { createExpander, findEle, shapeTpc } from './utils/dom'
 import {
-  moveNodeObj,
-  removeNodeObj,
-  insertNodeObj,
-  insertBeforeNodeObj,
-  insertParentNodeObj,
-  checkMoveValid,
   addParentLink,
-  moveUpObj,
+  checkMoveValid,
+  insertBeforeNodeObj,
+  insertNodeObj,
+  insertParentNodeObj,
   moveDownObj,
-  moveNodeBeforeObj,
   moveNodeAfterObj,
+  moveNodeBeforeObj,
+  moveNodeObj,
+  moveUpObj,
   refreshIds,
+  removeNodeObj,
+  rgbHex,
 } from './utils/index'
-import { findEle, createExpander, shapeTpc } from './utils/dom'
-import { rgbHex } from './utils/index'
 const $d = document
+
+function getNodeLineLength(obj: NodeObj) {
+  let length = 1
+  const recursion = (node: NodeObj, key: 'parent' | 'children') => {
+    length += 1
+    if (node?.[key]) {
+      recursion(node[key] as NodeObj, key)
+    }
+  }
+  recursion(obj, 'parent')
+  return length
+}
 
 /**
  * @exports NodeOperation
@@ -284,6 +296,9 @@ export const addChild = function (el: NodeElement, node: NodeObj) {
   console.time('addChild')
   const nodeEle = el || this.currentNode
   if (!nodeEle) return
+  if (this.maxDepth && this.maxDepth < getNodeLineLength(nodeEle.nodeObj)) {
+    return
+  }
   const { newTop, newNodeObj } = addChildFunction.call(this, nodeEle, node)
   this.bus.fire('operation', {
     name: 'addChild',

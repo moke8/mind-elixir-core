@@ -1,4 +1,19 @@
+## 说明
+
+内容基于原作者而开，增加以下配置项：
+
 ![mindelixir logo](https://raw.githubusercontent.com/ssshooter/mind-elixir-core/master/images/logo.png)
+
+```json
+{
+  "lastEdit": true, // 是否仅最后一级可更改
+  "customStyle": true, // 是否需要样式、标签、URL等不常用功能
+  "maxDepth": 5, // 子元素最多创建的深度
+  "memoName": "功能描述" // 描述字段名称（只更改显示，返回的数据key仍然是memo）
+}
+```
+
+---
 
 <p>
   <a href="https://www.npmjs.com/package/mind-elixir">
@@ -89,6 +104,10 @@ let options = {
   primaryLinkStyle: 2, // [1,2] default 1
   primaryNodeVerticalGap: 15, // default 25
   primaryNodeHorizontalGap: 15, // default 65
+  lastEdit: true, // Can only the last level node change the description
+  customStyle: true, // Do need to change the style, label, and URL functions
+  maxDepth: 5, // Maximum depth of child nodes created
+  memoName: '功能描述', // Describe the name of the field, only change the display, and the returned data is still memo
   contextMenuOption: {
     focus: true,
     link: true,

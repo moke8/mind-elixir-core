@@ -1,8 +1,5 @@
-import MindElixir, { E } from './index'
-import MindElixirLite from './index.lite'
 import example from './exampleData/1'
-import example2 from './exampleData/2'
-import example3 from './exampleData/3'
+import MindElixir, { E } from './index'
 
 interface Window {
   currentOperation: any
@@ -24,23 +21,15 @@ const options = {
   draggable: true,
   editable: true,
   contextMenu: true,
-  contextMenuOption: {
-    focus: true,
-    link: true,
-    extend: [
-      {
-        name: 'Node edit',
-        onclick: () => {
-          alert('extend menu')
-        },
-      },
-    ],
-  },
   mobileMenu: true,
   toolBar: true,
   nodeMenu: true,
   keypress: true,
   allowUndo: false,
+  lastEdit: true,
+  customStyle: true,
+  maxDepth: 5,
+  memoName: '功能描述',
   before: {
     moveDownNode() {
       return false
@@ -70,14 +59,14 @@ function sleep() {
   })
 }
 console.log('test E function', E('bd4313fbac40284b'))
-const mind2 = new (MindElixirLite as any)({
-  el: document.querySelector('#map2'),
-  direction: 2,
-  draggable: false,
-  // overflowHidden: true,
-  nodeMenu: true,
-})
-mind2.init(example2)
+// const mind2 = new (MindElixirLite as any)({
+//   el: document.querySelector('#map2'),
+//   direction: 2,
+//   draggable: false,
+//   // overflowHidden: true,
+//   nodeMenu: true,
+// })
+// mind2.init(example2)
 window.currentOperation = null
 mind.bus.addListener('operation', operation => {
   console.log(operation)

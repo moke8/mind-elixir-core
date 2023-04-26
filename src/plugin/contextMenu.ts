@@ -30,7 +30,9 @@ export default function (mind, option) {
   const menuUl = document.createElement('ul')
   menuUl.className = 'menu-list'
   menuUl.appendChild(add_child)
-  menuUl.appendChild(add_parent)
+  if (!mind.maxDepth) {
+    menuUl.appendChild(add_parent)
+  }
   menuUl.appendChild(add_sibling)
   menuUl.appendChild(remove_child)
   if (!option || option.focus) {
