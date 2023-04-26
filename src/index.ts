@@ -255,7 +255,7 @@ function MindElixir(
   this.nodeMenu = nodeMenu === undefined ? true : nodeMenu
   this.keypress = keypress === undefined ? true : keypress
   this.customStyle = customStyle === undefined ? true : customStyle
-  this.lastEdit = lastEdit === undefined ? true : lastEdit
+  this.lastEdit = lastEdit === undefined ? false : lastEdit
   this.maxDepth = maxDepth
   this.memoName = memoName
   this.mobileMenu = mobileMenu

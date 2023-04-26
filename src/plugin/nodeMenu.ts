@@ -182,17 +182,8 @@ export default function (mind) {
       mind.updateNodeHyperLink(mind.currentNode.nodeObj, e.target.value)
     }
   }
-  let state = 'open'
   buttonContainer.onclick = e => {
-    if (state === 'open') {
-      state = 'close'
-      menuContainer.className = 'close'
-      buttonContainer.innerHTML = `<svg class="icon" aria-hidden="true"><use xlink:href="#icon-menu"></use></svg>`
-    } else {
-      state = 'open'
-      menuContainer.className = ''
-      buttonContainer.innerHTML = `<svg class="icon" aria-hidden="true"><use xlink:href="#icon-close"></use></svg>`
-    }
+    menuContainer.hidden = !menuContainer.hidden
   }
   memoInput.onchange = (e: InputEvent & { target: HTMLInputElement }) => {
     if (!mind.currentNode) return
