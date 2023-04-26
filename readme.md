@@ -31,7 +31,7 @@ The content is based on the original author and the following configuration item
   </a>
 </p>
 
-[中文 README](https://github.com/ssshooter/mind-elixir-core/blob/master/readme.cn.md)
+[中文 README](https://github.com/mokevip/mind-elixir-core/blob/master/readme.cn.md)
 
 Mind elixir is a free open source mind map core.
 
