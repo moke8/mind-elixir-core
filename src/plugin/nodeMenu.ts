@@ -197,11 +197,11 @@ export default function (mind) {
   mind.bus.addListener('selectNode', function (nodeObj, clickEvent) {
     if (!clickEvent) return
     if (mind.lastEdit) {
-      if (nodeObj.children && !mind.customStyle) {
+      if (nodeObj.children?.length && !mind.customStyle) {
         menuContainer.hidden = true
         return
       }
-      if (nodeObj.children) {
+      if (nodeObj.children?.length) {
         document.querySelector('#nm-memo').setAttribute('style', 'display: none')
       } else {
         document.querySelector('#nm-memo').setAttribute('style', 'display: block')
