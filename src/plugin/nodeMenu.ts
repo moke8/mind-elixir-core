@@ -195,7 +195,7 @@ export default function (mind) {
     menuContainer.hidden = true
   })
   mind.bus.addListener('selectNode', function (nodeObj, clickEvent) {
-    if (!clickEvent) return
+    // if (!clickEvent) return
     if (mind.lastEdit) {
       if (nodeObj.children?.length && !mind.customStyle) {
         menuContainer.hidden = true

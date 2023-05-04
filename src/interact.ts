@@ -30,6 +30,7 @@ export const selectNode = function (targetElement, isNewNode, clickEvent) {
   this.currentNode = targetElement
   if (isNewNode) {
     this.bus.fire('selectNewNode', targetElement.nodeObj, clickEvent)
+    this.bus.fire('selectNode', targetElement.nodeObj, clickEvent)
   } else {
     this.bus.fire('selectNode', targetElement.nodeObj, clickEvent)
   }
